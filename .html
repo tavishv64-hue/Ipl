@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPL Live Scoreboard | IPL 2026 Live</title>
+    <style>
+        :root {
+            --cric-green: #00d26a;
+            --bg-dark: #121212;
+            --card-bg: #1e1e1e;
+            --text-gray: #aaa;
+            --accent-red: #ff3b3b;
+            --purple-accent: #8a2be2;
+            --orange-accent: #ff9800;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Roboto', sans-serif; }
+        body { background: var(--bg-dark); color: white; padding-bottom: 120px; }
+
+        /* Navigation */
+        nav { 
+            background: #222; 
+            padding: 15px; 
+            border-bottom: 3px solid var(--cric-green); 
+            position: sticky; top: 0; z-index: 1000; 
+            display: flex; justify-content: space-between; align-items: center; 
+        }
+        .logo { font-weight: 900; font-size: 1.2rem; letter-spacing: 1px; }
+        .live-indicator { display: flex; align-items: center; font-size: 0.7rem; font-weight: bold; }
+        .live-dot { width: 10px; height: 10px; background: #555; border-radius: 50%; display: inline-block; margin-right: 5px; }
+
+        /* Match Header */
+        .match-header { background: linear-gradient(180deg, #252525 0%, #121212 100%); padding: 30px 15px; text-align: center; border-bottom: 1px solid #333; }
+        .series-info { color: var(--text-gray); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }
+        
+        .score-container { display: flex; justify-content: space-around; align-items: center; margin: 20px 0; }
+        .team-box { flex: 1; }
+        
+        /* Replaced images with CSS Circles */
+        .team-icon-circle { 
+            width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--cric-green); 
+            margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; 
+            background: rgba(255,255,255,0.05); font-weight: 900; font-size: 1.2rem;
+        }
+        
+        .team-name { font-weight: bold; font-size: 1.2rem; display: block; }
+        
+        .live-score { flex: 1.5; }
+        .score-val { font-size: 2.8rem; font-weight: 900; color: var(--cric-green); line-height: 1; }
+        .overs-val { color: var(--text-gray); font-size: 1rem; margin-top: 5px; }
+
+        /* Countdown Box */
+        .countdown-container { background: rgba(0,210,106,0.1); border: 1px solid var(--cric-green); border-radius: 8px; padding: 10px; margin-top: 15px; display: inline-block; }
+        .countdown-timer { font-family: 'Courier New', monospace; font-weight: bold; color: var(--cric-green); font-size: 1.2rem; }
+
+        /* Card System */
+        .card { background: var(--card-bg); margin: 15px; border-radius: 12px; overflow: hidden; border: 1px solid #333; padding: 15px; }
+        .card-title { font-size: 0.8rem; font-weight: bold; color: var(--text-gray); margin-bottom: 15px; border-left: 3px solid var(--cric-green); padding-left: 10px; text-transform: uppercase; }
+
+        /* Next Match Layout */
+        .next-match-info { display: flex; justify-content: space-between; align-items: center; padding-top: 5px; }
+        .next-match-teams { font-weight: bold; font-size: 1.1rem; }
+        .next-match-details { font-size: 0.75rem; color: var(--text-gray); margin-top: 4px; }
+
+        /* Cap Section */
+        .cap-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #333; }
+        .orange-cap { color: var(--orange-accent); font-weight: bold; }
+        .purple-cap { color: var(--purple-accent); font-weight: bold; }
+
+        /* Points Table */
+        .points-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        .points-table th { text-align: left; color: var(--text-gray); padding: 8px 5px; border-bottom: 1px solid #333; }
+        .points-table td { padding: 10px 5px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+
+        /* News Ticker */
+        .news-ticker { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--purple-accent); color: white; padding: 10px 0; z-index: 2000; overflow: hidden; }
+        .ticker-text { display: inline-block; white-space: nowrap; animation: slide 25s linear infinite; }
+        @keyframes slide { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+        @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.2); opacity: 0.5; } 100% { transform: scale(1); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">Ipl live scoreboard<span style="color:var(--cric-green)">PRO</span></div>
+        <div class="live-indicator"><span class="live-dot" id="live-dot"></span> <span id="status-label">UPCOMING</span></div>
+    </nav>
+
+    <div class="match-header">
+        <span class="series-info">TATA IPL 2026 • Match 1 • Bengaluru</span>
+        <div class="score-container">
+            <div class="team-box">
+                <div class="team-icon-circle">R</div>
+                <span class="team-name">RCB</span>
+            </div>
+            <div class="live-score">
+                <div class="score-val" id="score-text">0/0</div>
+                <div class="overs-val" id="overs-text">(0.0 Ov)</div>
+            </div>
+            <div class="team-box">
+                <div class="team-icon-circle">S</div>
+                <span class="team-name">SRH</span>
+            </div>
+        </div>
+        
+        <div class="countdown-container">
+            <div style="font-size: 0.6rem; text-transform: uppercase; margin-bottom: 3px;">First Ball In</div>
+            <div class="countdown-timer" id="timer">00d 00h 00m 00s</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Next Match</div>
+        <div class="next-match-info">
+            <div>
+                <div class="next-match-teams">MI vs KKR</div>
+                <div class="next-match-details">Match 2 • Wankhede Stadium, Mumbai</div>
+            </div>
+            <div style="text-align: right;">
+                <div style="color: var(--cric-green); font-weight: bold;">March 29</div>
+                <div style="font-size: 0.7rem;">19:30 IST</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Season Leaders</div>
+        <div class="cap-row"><span>Orange Cap</span><span class="orange-cap">Virat Kohli (0)</span></div>
+        <div class="cap-row"><span>Purple Cap</span><span class="purple-cap">Md. Siraj (0)</span></div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">All Team Standings</div>
+        <table class="points-table">
+            <tr><th>Team</th><th>P</th><th>W</th><th>Pts</th></tr>
+            <tr><td>RCB</td><td>0</td><td>0</td><td style="color:var(--cric-green)">0</td></tr>
+            <tr><td>SRH</td><td>0</td><td>0</td><td style="color:var(--cric-green)">0</td></tr>
+            <tr><td>MI</td><td>0</td><td>0</td><td style="color:var(--cric-green)">0</td></tr>
+            <tr><td>CSK</td><td>0</td><td>0</td><td style="color:var(--cric-green)">0</td></tr>
+        </table>
+    </div>
+
+    <div class="news-ticker">
+        <div class="ticker-text">
+            IPL 2026 LIVE: Match 1 RCB vs SRH on March 28 • Virat Kohli joins RCB camp in Bengaluru • Stay tuned for live toss updates.
+        </div>
+    </div>
+
+    <script>
+        const matchTime = new Date("March 28, 2026 19:30:00").getTime();
+
+        function updateUI() {
+            const now = new Date().getTime();
+            const diff = matchTime - now;
+
+            if (diff > 0) {
+                const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const s = Math.floor((diff % (1000 * 60)) / 1000);
+                document.getElementById("timer").innerHTML = `${d}d ${h}h ${m}m ${s}s`;
+            } else {
+                document.getElementById("timer").innerHTML = "MATCH LIVE";
+                document.getElementById("status-label").innerText = "LIVE";
+                document.getElementById("live-dot").style.background = "var(--accent-red)";
+                document.getElementById("live-dot").style.animation = "pulse 1s infinite";
+            }
+        }
+
+        setInterval(updateUI, 1000);
+        updateUI();
+    </script>
+</body>
+</html>
